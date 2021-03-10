@@ -12,12 +12,12 @@ If the garage door is triggered by a simple momentary switch, then that's where 
 ![Relay](images/3.jpg)
 ![GPIO](images/4.jpg)
 
-A simple REST API which runs as a `systemd` service brings it together and is used to integrate it with the home automation system. I use [Home Assistant](https://www.home-assistant.io/) and a REST API can be integrated like this (`configuration.yaml`)
+A simple REST API  brings it together and is used to integrate it with the home automation system. I use [Home Assistant](https://www.home-assistant.io/) and a REST API can be integrated like this (`configuration.yaml`)
 
 ```
 rest_command:
   toggle_garage_door:
-    url: 'http://raspberrypi-that-hosts-the-api.local:5000/garage/trigger'
+    url: 'http://<the-host>:<the-port>/garage/trigger'
     method: 'post'
 
 script:
@@ -26,29 +26,6 @@ script:
       - service: rest_command.toggle_garage_door
 ```
 
-## Prerequisites
+I started out with a Raspberry Pi hosting a Flask API but soon found that while it did what I wanted it to do, it was overkill for the job. I built the same functionality for the ESP8266 and it works just as well for a fraction of the price.
 
-Requires `virtualenv`
-
-## Install dependencies
-
-```
-mkvirtualenv relay-garage-controller
-pip install -r requirements.txt
-```
-
-## Start application
-
-```
-gunicorn -w 2 -b 0.0.0.0:5000 garage_controller:app
-```
-
-## Install as linux service
-
-```
-./scripts/build.sh && sudo ./scripts/install.sh
-```
-
-## Control garage door
-
-`curl -X POST http://localhost:5000/garage/trigger`
+See [Raspberry PI/](raspberrypi/) for the Python solution running on the Raspberry and [ESP8266/](esp8266/) for the C version running on the ESP8266.
